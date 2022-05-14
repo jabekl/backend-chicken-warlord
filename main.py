@@ -1,10 +1,25 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from db_func import database
 import json
 import uvicorn
 import os
 
 app = FastAPI()
+
+origins = [
+    "https://jabekl.github.io/chicken-warload/", 
+    "*"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 db = database()
 
