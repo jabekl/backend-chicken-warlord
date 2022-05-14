@@ -1,10 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from db_func import database
 import json
 
 app = FastAPI()
 
 db = database()
+
 
 @app.get("/")
 async def root():
@@ -24,6 +25,7 @@ async def root():
         }
     ]
 
-
-# /top-3
+app.post("/top-3-post/")
+async def get_score(data: Request):
+    return data.json()
 # /top-3-post
