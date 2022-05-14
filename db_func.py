@@ -41,10 +41,7 @@ class database():
         self.cur.execute(delete)
         self.connection.commit()
 
-        print(f"1.Platz mit {entries[0][1]} Punkten: {entries[0][0]}")
-        print(f"2.Platz mit {entries[1][1]} Punkten: {entries[1][0]}")
-        print(f"3.Platz mit {entries[2][1]} Punkten: {entries[2][0]}")
-
+        return entries
     
     def add_score(self, u_name, u_score):
         insert = "INSERT INTO 'top3' VALUES (?, ?)"
@@ -53,5 +50,8 @@ class database():
     
 if __name__ == "__main__":
     db = database()
-    db.get_top3()
-    #db.add_score("Hake", "5")
+    entries = db.get_top3()
+
+    print(f"1.Platz mit {entries[0][1]} Punkten: {entries[0][0]}")
+    print(f"2.Platz mit {entries[1][1]} Punkten: {entries[1][0]}")
+    print(f"3.Platz mit {entries[2][1]} Punkten: {entries[2][0]}")
