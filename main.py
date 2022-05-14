@@ -8,6 +8,9 @@ app = FastAPI()
 
 db = database()
 
+app.post("/top-3-post/")
+async def get_score(data: Request):
+    return data.json()
 
 @app.get("/")
 async def root():
@@ -26,8 +29,3 @@ async def root():
             "points": top3[2][1]
         }
     ]
-
-app.post("/top-3-post/")
-async def get_score(data: Request):
-    return data.json()
-
