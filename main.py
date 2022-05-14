@@ -10,7 +10,8 @@ db = database()
 
 app.post("/top-3-post/")
 async def get_score(data: Request):
-    return data.json()
+    responseData = await data.json()
+    return responseData
 
 @app.get("/")
 async def root():
