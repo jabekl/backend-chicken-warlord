@@ -1,16 +1,11 @@
 from fastapi import FastAPI, Request
 from db_func import database
-import json
-import uvicorn
-import os
+from pydantic import BaseModel
 
 app = FastAPI()
 
 db = database()
 
-app.post("/top-3-post/")
-async def get_score(data: Request):
-    return data.json()
 
 @app.get("/")
 async def root():
@@ -29,3 +24,18 @@ async def root():
             "points": top3[2][1]
         }
     ]
+
+@app.post("/top-3-post/")
+async def get_score(request: Request):
+    """
+    Formatierung zur Punkteübergabe:
+
+    {
+    "name": "xy",
+    "points": 0
+    }      
+
+    """
+    data = await request.json()
+    db.add_score(u_name=data['name'], u_score=data['points'])
+    return data
