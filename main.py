@@ -31,6 +31,3 @@ app.post("/top-3-post/")
 async def get_score(data: Request):
     return data.json()
 
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=os.getenv('PORT'))
