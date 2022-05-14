@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from db_func import database
 import json
 import uvicorn
+import os
 
 app = FastAPI()
 
@@ -32,4 +33,4 @@ async def get_score(data: Request):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host=0.0.0.0, port=8000)
+    uvicorn.run(app, host=0.0.0.0, port=os.getenv('PORT'))
