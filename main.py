@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from db_func import database
 import json
+import uvicorn
 
 app = FastAPI()
 
@@ -28,4 +29,7 @@ async def root():
 app.post("/top-3-post/")
 async def get_score(data: Request):
     return data.json()
-# /top-3-post
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host=0.0.0.0, port=8000)
