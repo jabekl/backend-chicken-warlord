@@ -10,6 +10,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from db_func import database
 
 load_dotenv("./.env")
+
 app = FastAPI()
 security = HTTPBasic()
 db = database()
