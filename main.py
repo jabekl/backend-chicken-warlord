@@ -1,5 +1,6 @@
 import secrets
 from hashlib import sha256
+import data
 
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,7 +27,7 @@ app.add_middleware(
 
 def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, "chickenWarlordAPI")
-    correct_password = secrets.compare_digest(sha256(credentials.password.encode('ascii')).hexdigest(), "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3")
+    correct_password = secrets.compare_digest(sha256(credentials.password.encode('ascii')).hexdigest(), data.password_hash)
 
     if not (correct_username and correct_password):
         raise HTTPException(
