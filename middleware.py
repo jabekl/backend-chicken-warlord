@@ -1,7 +1,4 @@
-from email import header
 import typing
-from urllib import response
-from django.shortcuts import redirect
 
 from starlette.datastructures import URL, Headers
 from starlette.responses import PlainTextResponse, RedirectResponse, Response
