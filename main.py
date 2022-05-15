@@ -1,13 +1,15 @@
+import os
 import secrets
 from hashlib import sha256
-import data
 
+from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from db_func import database
 
+load_dotenv("./.env")
 app = FastAPI()
 security = HTTPBasic()
 db = database()
@@ -27,7 +29,7 @@ app.add_middleware(
 
 def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, "chickenWarlordAPI")
-    correct_password = secrets.compare_digest(sha256(credentials.password.encode('ascii')).hexdigest(), data.password_hash)
+    correct_password = secrets.compare_digest(sha256(credentials.password.encode('ascii')).hexdigest(), os.getenv("hash"))
 
     if not (correct_username and correct_password):
         raise HTTPException(
