@@ -1,8 +1,15 @@
-from fastapi import FastAPI, Request
+import secrets
+from hashlib import sha256
+
+from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+
 from db_func import database
 
 app = FastAPI()
+security = HTTPBasic()
+db = database()
 
 origins = [
     "https://jabekl.github.io/chicken-warload/", 
@@ -17,11 +24,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
+    correct_username = secrets.compare_digest(credentials.username, "chickenWarlordAPI")
+    correct_password = secrets.compare_digest(sha256(credentials.password.encode('ascii')).hexdigest(), "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3")
 
-db = database()
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect credentials",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
+
 
 @app.get("/")
-async def root():
+async def root(username: str = Depends(get_current_username)):
     top3 = db.get_top3()
     return [
         {
@@ -38,8 +55,9 @@ async def root():
         }
     ]
 
+
 @app.post("/top-3-post/")
-async def get_score(request: Request):
+async def get_score(request: Request, username: str = Depends(get_current_username)):
     """
     Formatierung zur Punkteübergabe:
 
