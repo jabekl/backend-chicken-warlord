@@ -16,37 +16,50 @@ class database():
         self.cur.execute(table)
     
     def get_top3(self):
-        
-        entries = []
+        try:
+            entries = []
 
-        for i in range(3):
-            if i == 0:
-                entrie = "SELECT name, MAX(score) from top3"
-                self.cur.execute(entrie)
-            else:
-                if i==2: e = entries[1][0]
-                else: e = " "
-                entrie = f"SELECT name, MAX(score) from top3 WHERE name NOT IN ('{entries[0][0]}', '{e}')"
-                self.cur.execute(entrie)
-            
-            entrie = self.cur.fetchone()
-            entries.append(entrie)
+            for i in range(3):
+                if i == 0:
+                    entrie = "SELECT name, MAX(score) from top3"
+                    self.cur.execute(entrie)
+                else:
+                    if i==2: e = entries[1][0]
+                    else: e = " "
+                    entrie = f"SELECT name, MAX(score) from top3 WHERE name NOT IN ('{entries[0][0]}', '{e}')"
+                    self.cur.execute(entrie)
+                
+                entrie = self.cur.fetchone()
+                entries.append(entrie)
 
-        names = []
-        for x in range(3):
-            names.append(entries[x][0])
+            names = [name[0] for name in entries]
+            delete = f"DELETE from top3 WHERE name NOT IN ('{names[0]}', '{names[1]}', '{names[2]}')"
 
-        delete = f"DELETE from top3 WHERE name NOT IN ('{names[0]}', '{names[1]}', '{names[2]}')"
-        
-        self.cur.execute(delete)
-        self.connection.commit()
+            self.cur.execute(delete)
+            self.connection.commit()
 
-        return entries
+            return entries
+        except sqlite3.Error as er:
+            return er.args
     
     def add_score(self, u_name, u_score):
-        insert = "INSERT INTO 'top3' VALUES (?, ?)"
-        self.cur.execute(insert, (u_name, u_score))
-        self.connection.commit()
+        try: 
+            insert = "INSERT INTO 'top3' VALUES (?, ?)"
+            self.cur.execute(insert, (u_name, u_score))
+            self.connection.commit()
+            return [True]
+        except sqlite3.Error as er:
+            return er.args
+
+    def delete(self, u_name):
+        try:
+            delete = f"DELETE from top3 WHERE name = '{u_name}'"
+            self.cur.execute(delete)
+            self.connection.commit()
+            return [True]
+        except sqlite3.Error as er:
+            return er.args
+        
     
 if __name__ == "__main__":
     db = database()

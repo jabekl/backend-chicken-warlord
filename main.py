@@ -28,7 +28,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
+def user(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, "chickenWarlordAPI")
     correct_password = secrets.compare_digest(sha256(credentials.password.encode('ascii')).hexdigest(), os.getenv("hash"))
 
@@ -38,13 +38,14 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
             detail="Incorrect credentials",
             headers={"WWW-Authenticate": "Basic"},
         )
-    return credentials.username
+    return credentials
 
 
 @app.get("/")
-async def root(username: str = Depends(get_current_username)):
+async def root(user: str = Depends(user)):
     top3 = db.get_top3()
     return [
+
         {
             "name": top3[0][0],
             "points": top3[0][1]
@@ -61,9 +62,9 @@ async def root(username: str = Depends(get_current_username)):
 
 
 @app.post("/top-3-post/")
-async def get_score(request: Request, username: str = Depends(get_current_username)):
+async def get_score(request: Request, user: str = Depends(user)):
     """
-    Formatierung zur Punkteübergabe:
+    Formatierung zur Datenübergabe:
 
     {
     "name": "xy",
@@ -72,11 +73,22 @@ async def get_score(request: Request, username: str = Depends(get_current_userna
 
     """
     data = await request.json()
-    db.add_score(u_name=data['name'], u_score=data['points'])
-    return data
+    result = db.add_score(u_name=data['name'], u_score=data['points'])
+    return {
+        "status": result[0  ],
+        "recieved": data
+    }
 
-
-@app.delete("/top-3-delete-entries-from-database")
-async def delete_score(request: Request, username: str = Depends(get_current_username)):
+@app.delete("/top-3-delete")
+async def delete(request: Request, user: str = Depends(user)):
+    """
+    Formatierung zur Datenübergabe:
+    
+    { "name": "xy" }
+    """
     data = await request.json()
-    return data
+    name = data['name']
+
+    result = db.delete(name)
+
+    return {"status": result[0]}
