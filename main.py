@@ -5,28 +5,35 @@ from hashlib import sha256
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from db_func import database
+from middleware import CheckHost, HTTPSRedirect
 
 load_dotenv("./.env")
 
-app = FastAPI()
+
 security = HTTPBasic()
 db = database()
 
-origins = [
-    "https://jabekl.github.io/chicken-warload/", 
+origins = [ 
     "*"
 ]
+
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=['GET', 'POST', 'DELETE'],
     allow_headers=["*"],
 )
+app.add_middleware(HTTPSRedirect) #comment out while testing in local network
+app.add_middleware(CheckHost)
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
 
 def user(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, "chickenWarlordAPI")
