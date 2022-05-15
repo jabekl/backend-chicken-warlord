@@ -16,7 +16,6 @@ security = HTTPBasic()
 db = database()
 
 origins = [
-    "https://jabekl.github.io/chicken-warload/", 
     "*"
 ]
 
