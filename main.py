@@ -76,7 +76,7 @@ async def get_score(request: Request, username: str = Depends(get_current_userna
     return data
 
 
-@app.delete("/top-3-delete")
+@app.delete("/top-3-delete-entries-from-database")
 async def delete_score(request: Request, username: str = Depends(get_current_username)):
     data = await request.json()
     return data
