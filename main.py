@@ -17,7 +17,7 @@ load_dotenv("./.env")
 security = HTTPBasic()
 db = database()
 
-origins = [ 
+origins = [
     "*"
 ]
 
