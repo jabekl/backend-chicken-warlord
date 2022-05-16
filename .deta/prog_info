@@ -1,0 +1,1 @@
+{"id":"1d5760c1-6cfa-433f-a328-91ff9c7d02f0","space":22990,"runtime":"python3.9","name":"backend-chicken-warlord","path":"us65di","project":"a0g1hs3y","account":"144798365827","region":"eu-central-1","deps":["fastapi==0.77.1","uvicorn==0.17.6","python-dotenv"],"envs":null,"public":true,"log_level":"debug","cron":""}

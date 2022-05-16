@@ -6,11 +6,27 @@ class database():
     def __init__(self):
         self.connection = sqlite3.connect(DB)
         self.cur = self.connection.cursor()
+
+        self.check_table()
     
+    def check_table(self):
+        try:
+            sql = f"SELECT name FROM sqlite_master WHERE type='table' AND name='top3';"
+            self.cur.execute(sql)
+            res = self.cur.fetchone()
+            try:
+                table_name = res[0]
+            except TypeError:
+                print("Table not found.")
+                self.create_table("top3")
+                print(f"Created table 'top3'.")
+        except sqlite3.Error as er:
+            print(f"FATAL ERROR: {er}")
+
     def create_table(self, name):
         table = f""" CREATE TABLE {name} (
             name varchar(255) not null,
-            score varchar(255) not null
+            score integer not null
         ); """
 
         self.cur.execute(table)
