@@ -2,4 +2,3 @@ __pycache__
 .env
 push_to_git.ps1
 scores.db
-.deta
