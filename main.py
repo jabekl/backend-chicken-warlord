@@ -29,7 +29,7 @@ app.add_middleware(
     allow_methods=['GET', 'POST', 'DELETE'],
     allow_headers=["*"],
 )
-# app.add_middleware(HTTPSRedirect) #comment out while testing in local network
+app.add_middleware(HTTPSRedirect) #comment out while testing in local network
 app.add_middleware(CheckHost)
 app.add_middleware(GZipHandler, minimum_size=1000)
 
@@ -45,7 +45,6 @@ def user(credentials: HTTPBasicCredentials = Depends(security)):
             headers={"WWW-Authenticate": "Basic"},
         )
     return credentials
-
 
 @app.get("/")
 async def root(user: str = Depends(user)):

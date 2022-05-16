@@ -110,7 +110,7 @@ class _GZipResponder:
 		self.send = send
 		await self.app(scope, receive, self.send_gzip)
 	
-	async def send_gzip(self, message= Message):
+	async def send_gzip(self, message: Message = Message):
 		message_type = message["type"]
 		if message_type == "http.response.start":
 			self.inital_message = message

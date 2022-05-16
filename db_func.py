@@ -23,7 +23,7 @@ class database():
         except sqlite3.Error as er:
             print(f"FATAL ERROR: {er}")
 
-    def create_table(self, name):
+    def create_table(self, name: str):
         table = f""" CREATE TABLE {name} (
             name varchar(255) not null,
             score integer not null
@@ -58,7 +58,7 @@ class database():
         except sqlite3.Error as er:
             return er.args
     
-    def add_score(self, u_name, u_score):
+    def add_score(self, u_name: str, u_score: str):
         try: 
             insert = "INSERT INTO 'top3' VALUES (?, ?)"
             self.cur.execute(insert, (u_name, u_score))
@@ -67,7 +67,7 @@ class database():
         except sqlite3.Error as er:
             return er.args
 
-    def delete(self, u_name):
+    def delete(self, u_name: str):
         try:
             delete = f"DELETE from top3 WHERE name = '{u_name}'"
             self.cur.execute(delete)
