@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from db_func import database
-from middleware import CheckHost, HTTPSRedirect, GZipHandler, RateLimiting
+from Middleware import CheckHost, HTTPSRedirect, GZipHandler, RateLimiting
 
 load_dotenv("./.env")
 
@@ -29,7 +29,7 @@ app.add_middleware(
     allow_methods=['GET', 'POST', 'DELETE'],
     allow_headers=["*"],
 )
-app.add_middleware(HTTPSRedirect) #comment out while testing in local network
+# app.add_middleware(HTTPSRedirect) #comment out while testing in local network
 app.add_middleware(CheckHost)
 app.add_middleware(GZipHandler, minimum_size=1000)
 app.add_middleware(RateLimiting)
@@ -47,9 +47,11 @@ def user(credentials: HTTPBasicCredentials = Depends(security)):
     return credentials
 
 @app.get("/")
-async def root(user: str = Depends(user)):
+@app.get("")
+async def root(user: str = Depends(user)) -> list:
     top3 = db.get_top3()
-    return [
+
+    res = [
 
         {
             "name": top3[0][0],
@@ -64,10 +66,12 @@ async def root(user: str = Depends(user)):
             "points": top3[2][1]
         }
     ]
+    return res
 
 
 @app.post("/top-3-post/")
-async def get_score(request: Request, user: str = Depends(user)):
+@app.post("/top-3-post")
+async def get_score(request: Request, user: str = Depends(user)) -> dict:
     """
     Formatierung zur Datenübergabe:
 
@@ -79,13 +83,17 @@ async def get_score(request: Request, user: str = Depends(user)):
     """
     data = await request.json()
     result = db.add_score(u_name=data['name'], u_score=data['points'])
-    return {
-        "status": result[0  ],
+
+
+    res = {
+        "status": result[0],
         "recieved": data
     }
+    return res
 
+@app.delete("/top-3-delete/")
 @app.delete("/top-3-delete")
-async def delete(request: Request, user: str = Depends(user)):
+async def delete(request: Request, user: str = Depends(user)) -> dict:
     """
     Formatierung zur Datenübergabe:
     
@@ -96,4 +104,6 @@ async def delete(request: Request, user: str = Depends(user)):
 
     result = db.delete(name)
 
-    return {"status": result[0]}
+
+    res =  {"status": result[0]}
+    return res

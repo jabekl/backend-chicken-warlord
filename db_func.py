@@ -1,15 +1,17 @@
 import sqlite3
+from typing import Union
 
 DB = "./scores.db"
 
+
 class database():
-    def __init__(self):
+    def __init__(self) -> None:
         self.connection = sqlite3.connect(DB)
         self.cur = self.connection.cursor()
 
         self.check_table()
-    
-    def check_table(self):
+
+    def check_table(self) -> None:
         try:
             sql = f"SELECT name FROM sqlite_master WHERE type='table' AND name='top3';"
             self.cur.execute(sql)
@@ -23,15 +25,15 @@ class database():
         except sqlite3.Error as er:
             print(f"FATAL ERROR: {er}")
 
-    def create_table(self, name: str):
+    def create_table(self, name: str) -> None:
         table = f""" CREATE TABLE {name} (
             name varchar(255) not null,
             score integer not null
         ); """
 
         self.cur.execute(table)
-    
-    def get_top3(self):
+
+    def get_top3(self) -> Union[list, str]:
         try:
             entries = []
 
@@ -40,11 +42,13 @@ class database():
                     entrie = "SELECT name, MAX(score) from top3"
                     self.cur.execute(entrie)
                 else:
-                    if i==2: e = entries[1][0]
-                    else: e = " "
+                    if i == 2:
+                        e = entries[1][0]
+                    else:
+                        e = " "
                     entrie = f"SELECT name, MAX(score) from top3 WHERE name NOT IN ('{entries[0][0]}', '{e}')"
                     self.cur.execute(entrie)
-                
+
                 entrie = self.cur.fetchone()
                 entries.append(entrie)
 
@@ -56,27 +60,27 @@ class database():
 
             return entries
         except sqlite3.Error as er:
-            return er.args
-    
-    def add_score(self, u_name: str, u_score: str):
-        try: 
+            return str(er.args)
+
+    def add_score(self, u_name: str, u_score: str) -> Union[list, str]:
+        try:
             insert = "INSERT INTO 'top3' VALUES (?, ?)"
             self.cur.execute(insert, (u_name, u_score))
             self.connection.commit()
             return [True]
         except sqlite3.Error as er:
-            return er.args
+            return str(er.args)
 
-    def delete(self, u_name: str):
+    def delete(self, u_name: str) -> Union[list, str]:
         try:
             delete = f"DELETE from top3 WHERE name = '{u_name}'"
             self.cur.execute(delete)
             self.connection.commit()
             return [True]
         except sqlite3.Error as er:
-            return er.args
-        
-    
+            return str(er.args)
+
+
 if __name__ == "__main__":
     db = database()
     entries = db.get_top3()
