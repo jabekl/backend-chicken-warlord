@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from db_func import database
-from middleware import CheckHost, HTTPSRedirect, GZipHandler
+from middleware import CheckHost, HTTPSRedirect, GZipHandler, RateLimiting
 
 load_dotenv("./.env")
 
@@ -32,7 +32,7 @@ app.add_middleware(
 app.add_middleware(HTTPSRedirect) #comment out while testing in local network
 app.add_middleware(CheckHost)
 app.add_middleware(GZipHandler, minimum_size=1000)
-
+app.add_middleware(RateLimiting)
 
 def user(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, "chickenWarlordAPI")
