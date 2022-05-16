@@ -29,10 +29,10 @@ app.add_middleware(
     allow_methods=['GET', 'POST', 'DELETE'],
     allow_headers=["*"],
 )
-# app.add_middleware(HTTPSRedirect) #comment out while testing in local network
+app.add_middleware(HTTPSRedirect) #comment out while testing in local network
 app.add_middleware(CheckHost)
 app.add_middleware(GZipHandler, minimum_size=1000)
-#app.add_middleware(RateLimiting)
+app.add_middleware(RateLimiting)
 
 def user(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, "chickenWarlordAPI")
