@@ -1,5 +1,8 @@
+import os
+
 from piccolo_api.rate_limiting.middleware import (InMemoryLimitProvider,
-                                                  RateLimitProvider, RateLimitError)
+                                                  RateLimitError,
+                                                  RateLimitProvider)
 from starlette.middleware.base import (BaseHTTPMiddleware, Request,
                                        RequestResponseEndpoint)
 from starlette.responses import Response
@@ -14,7 +17,7 @@ class RateLimiting(BaseHTTPMiddleware):
 	timespan = time in seconds
 	block_duration = blocking time after too many requests in second
 	"""
-	def __init__(self, app: ASGIApp, provider: RateLimitProvider = InMemoryLimitProvider(limit=2, timespan=1, block_duration=60)):
+	def __init__(self, app: ASGIApp, provider: RateLimitProvider = InMemoryLimitProvider(limit=os.getenv("max_requests_per_s"), timespan=1, block_duration=os.getenv("block_duration"))):
 		super().__init__(app)
 		self.rate_limit = provider
 
